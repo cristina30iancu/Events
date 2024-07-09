@@ -2,8 +2,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Signup.css'; // Asigură-te că stilurile sunt importate
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export const Signup = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,6 +38,9 @@ export const Signup = () => {
         password: formData.password
       });
       console.log('Signup successful:', response.data);
+      toast.success("Cont creat!")
+      navigate("/login")
+      
     } catch (err) {
       setError('Error signing up');
     }

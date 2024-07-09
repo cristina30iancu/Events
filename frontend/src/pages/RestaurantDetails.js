@@ -2,14 +2,25 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { Edit, Delete } from '@mui/icons-material';
 import './RestaurantDetails.css'; // Stilurile pentru componentă
+import { useAuth } from '../context/AuthContext';
 
 const RestaurantDetails = () => {
   const { id } = useParams();
+  const { state } = useAuth();
   const [restaurant, setRestaurant] = useState(null);
   const [services, setServices] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedHall, setSelectedHall] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    capacity: '',
+    facilities: '',
+    image: ''
+  });
   const [reservationData, setReservationData] = useState({
     eventName: '',
     eventDate: '',
@@ -51,6 +62,57 @@ const RestaurantDetails = () => {
     setSelectedHall(null);
   };
 
+  const handleEditClick = (hall) => {
+    setSelectedHall(hall);
+    setEditFormData({
+      name: hall.name,
+      capacity: hall.capacity,
+      facilities: hall.facilities,
+      image: hall.image
+    });
+    setShowEditModal(true);
+  };
+
+  const handleDeleteClick = (hall) => {
+    setSelectedHall(hall);
+    setShowDeleteModal(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:8080/halls/${selectedHall.id}`, editFormData);
+      setShowEditModal(false);
+      const updatedHalls = restaurant.Halls.map(hall =>
+        hall.id === selectedHall.id ? { ...hall, ...editFormData } : hall
+      );
+      setRestaurant({ ...restaurant, Halls: updatedHalls });
+    } catch (error) {
+      console.error('Error updating hall:', error);
+    }
+  };
+
+  const handleDeleteSubmit = async () => {
+    try {
+      await axios.delete(`http://localhost:8080/halls/${selectedHall.id}`);
+      setShowDeleteModal(false);
+      setRestaurant({
+        ...restaurant,
+        Halls: restaurant.Halls.filter(hall => hall.id !== selectedHall.id)
+      });
+    } catch (error) {
+      console.error('Error deleting hall:', error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setReservationData({
@@ -87,7 +149,7 @@ const RestaurantDetails = () => {
     }
 
     try {
-      const userId = 1; // Înlocuiește cu ID-ul utilizatorului autentic
+      const userId = state.id; // Înlocuiește cu ID-ul utilizatorului autentic
 
       // Verifică dacă utilizatorul are deja o rezervare în acea zi
       const userReservation = await axios.get(`http://localhost:8080/reservations/user/${userId}/date/${reservationData.eventDate}`);
@@ -130,11 +192,13 @@ const RestaurantDetails = () => {
           <Card.Text><strong>Adresă:</strong> {restaurant.address}</Card.Text>
         </Card.Body>
       </Card>
-      <div className="add-button-container">
-        <Button variant="primary" className="add-hall-button">
-          Adauga salon
-        </Button>
-      </div>
+      {state.isAdmin && (
+        <div className="add-button-container">
+          <Button variant="primary" className="add-hall-button">
+            Adaugă salon
+          </Button>
+        </div>
+      )}
       <h3 className="mt-5">Saloane</h3>
       <Row>
         {restaurant.Halls.map((hall) => (
@@ -145,9 +209,20 @@ const RestaurantDetails = () => {
                 <Card.Title>{hall.name}</Card.Title>
                 <Card.Text><strong>Capacitate:</strong> {hall.capacity}</Card.Text>
                 <Card.Text><strong>Facilități:</strong> {hall.facilities}</Card.Text>
-                <Button variant="success" onClick={() => handleShowModal(hall)}>
-                  Rezervă
-                </Button>
+                {!state.isAdmin ? (
+                  <Button variant="success" onClick={() => handleShowModal(hall)}>
+                    Rezervă
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="warning" onClick={() => handleEditClick(hall)}>
+                      <Edit />
+                    </Button>
+                    <Button variant="danger" onClick={() => handleDeleteClick(hall)}>
+                      <Delete />
+                    </Button>
+                  </>
+                )}
               </Card.Body>
             </Card>
           </Col>
@@ -213,12 +288,91 @@ const RestaurantDetails = () => {
             </Form.Group>
 
             {error && <p className="error-message">{error}</p>}
-            
+
             <Button variant="primary" type="submit" className="reserve-button">
               Rezervă
             </Button>
           </Form>
         </Modal.Body>
+      </Modal>
+
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Editare Salon</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleEditSubmit}>
+            <Form.Group controlId="formName">
+              <Form.Label>Nume</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Introdu numele salonului"
+                name="name"
+                value={editFormData.name}
+                onChange={handleEditChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCapacity">
+              <Form.Label>Capacitate</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Introdu capacitatea salonului"
+                name="capacity"
+                value={editFormData.capacity}
+                onChange={handleEditChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formFacilities">
+              <Form.Label>Facilități</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Introdu facilitățile salonului"
+                name="facilities"
+                value={editFormData.facilities}
+                onChange={handleEditChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formImage">
+              <Form.Label>Imagine URL</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Introdu URL-ul imaginii salonului"
+                name="image"
+                value={editFormData.image}
+                onChange={handleEditChange}
+                required
+              />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              Salvează
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Șterge Salon</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Doriți să ștergeți salonul {selectedHall?.name}?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Anulează
+          </Button>
+          <Button variant="danger" onClick={handleDeleteSubmit}>
+            Șterge
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );

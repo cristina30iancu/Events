@@ -53,22 +53,40 @@ const App = () => {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/register" element={<Signup />} />
 
-          <Route exact path="/add-restaurant" element={<AddRestaurant />} />
-          <Route exact path="/add-hall" element={<AddHall />} />
-          <Route path="/restaurant/:id" element={<RestaurantDetails/>} />
-          <Route path="/restaurants" element={<RestaurantList/>} />
-          <Route path="/services" element={<ServicesPage/>} />
+          <Route exact path="/add-restaurant" element={<PrivateAdminRoute />}>
+            <Route exact path="/add-restaurant" element={<AddRestaurant />} />
+          </Route>
+
+          <Route exact path="/add-hall" element={<PrivateAdminRoute />}>
+            <Route exact path="/add-hall" element={<AddHall />} />
+          </Route>
+
+          <Route exact path="/services" element={<PrivateAdminRoute />}>
+            <Route exact path="/services" element={<ServicesPage />} />
+          </Route>
+          
+          <Route exact path="/restaurant/:id" element={<PrivateRoute />}>
+            <Route exact path="/restaurant/:id" element={<RestaurantDetails />} />
+          </Route>
+
+          <Route exact path="/restaurants" element={<PrivateRoute />}>
+            <Route exact path="/restaurants" element={<RestaurantList />} />
+          </Route>
           
           <Route exact path="/admin/users" element={<PrivateAdminRoute />}>
             <Route exact path="/admin/users" element={<AdminUsersList />} />
           </Route>
 
-          <Route exact path="/reservations" element={<PrivateAdminRoute />}>
-            <Route exact path="/reservations" element={<RezervariList />} />
+          <Route exact path="/reservations-admin" element={<PrivateAdminRoute />}>
+            <Route exact path="/reservations-admin" element={<RezervariList />} />
           </Route>
 
-          <Route exact path="/reservations" element={<PrivateRoute />}>
-            <Route exact path="/reservations" element={<UserReservations />} />
+          <Route exact path="/reservations-user" element={<PrivateRoute />}>
+            <Route exact path="/reservations-user" element={<UserReservations />} />
+          </Route>
+
+          <Route exact path="/user/:id/reservations" element={<PrivateRoute />}>
+            <Route exact path="/user/:id/reservations" element={<UserReservations />} />
           </Route>
         </Routes>
       </AuthProvider>

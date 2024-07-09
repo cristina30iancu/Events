@@ -122,7 +122,7 @@ const Reservation = sequelize.define('Reservation', {
   },
   status: {
     type: DataTypes.ENUM('în așteptare', 'confirmată', 'anulată'),
-    defaultValue: 'pending',
+    defaultValue: 'în așteptare',
   },
 });
 
@@ -146,6 +146,11 @@ const Invoice = sequelize.define('Invoice', {
 });
 
 const ReservationService = sequelize.define('ReservationService', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   ReservationId: {
     type: DataTypes.INTEGER,
     references: {

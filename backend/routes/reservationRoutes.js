@@ -1,5 +1,5 @@
 const express = require('express');
-const { Reservation, Hall, Service, User, ReservationService } = require('../database'); // Asigură-te că importi modelele necesare
+const { Reservation, Hall, Service, User, ReservationService, Restaurant } = require('../database'); // Asigură-te că importi modelele necesare
 const router = express.Router();
 
 // Ruta pentru preluarea tuturor rezervărilor
@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   try {
     const reservations = await Reservation.findAll({
       include: [
-        { model: Hall },
+        { model: Hall, include: [{ model: Restaurant }] },
         { model: User },
         {
           model: Service,
@@ -27,7 +27,14 @@ router.get('/user/:userId', async (req, res) => {
     const { userId } = req.params;
     const reservations = await Reservation.findAll({
       where: { userId },
-      include: [Hall, Service]
+      include: [
+        { model: Hall, include: [{ model: Restaurant }] },
+        { model: User },
+        {
+          model: Service,
+          through: { model: ReservationService }
+        }
+      ]
     });
     res.json(reservations);
   } catch (error) {
@@ -112,17 +119,38 @@ router.post('/', async (req, res) => {
       eventName,
       eventDate,
       numberOfPeople,
-      status: 'pending',
       hallId,
       userId
     });
 
-    await newReservation.setServices(serviceIds);
-
+    console.log(serviceIds)
+    for (let sId of serviceIds) {
+      console.log('creating' ,{ ReservationId: newReservation.id, ServiceId: sId } )
+      await ReservationService.create({ ReservationId: newReservation.id, ServiceId: sId })
+    }
     res.status(201).json(newReservation);
   } catch (error) {
+    console.error(error)
     res.status(500).json({ message: 'Error adding reservation', error: error.message });
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const reservation = await Reservation.findByPk(id);
+    if (!reservation) {
+      return res.status(404).json({ message: 'Rezervarea nu a fost găsită' });
+    }
+
+    reservation.status = status;
+    await reservation.save();
+
+    res.json(reservation);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating reservation status', error: error.message });
+  }
+});
 module.exports = router;

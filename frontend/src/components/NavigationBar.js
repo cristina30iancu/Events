@@ -38,6 +38,17 @@ const NavigationBar = () => {
               <NavDropdown.Item href="/restaurants">Vizualizează</NavDropdown.Item>
             </NavDropdown>
           )}
+           {state.isAuthenticated && !state.isAdmin && (
+            <Nav.Link className="my-3" href="/restaurants">Rezervă</Nav.Link>
+          )}
+           {state.isAuthenticated && state.isAdmin &&
+           <Nav.Link className="my-3" href="/services">Servicii</Nav.Link>}
+            {state.isAuthenticated && state.isAdmin &&
+           <Nav.Link className="my-3" href="/admin/users">Utilizatori</Nav.Link>}
+            {state.isAuthenticated && state.isAdmin &&
+           <Nav.Link className="my-3" href="/reservations-admin">Rezervări</Nav.Link>}
+            {state.isAuthenticated && !state.isAdmin &&
+           <Nav.Link className="my-3" href="/reservations-user">Rezervări</Nav.Link>}
         </Nav>
         
         <Nav>
