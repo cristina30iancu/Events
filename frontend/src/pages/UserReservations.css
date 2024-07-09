@@ -1,0 +1,22 @@
+/* src/components/UserReservations.css */
+
+.user-reservations-container {
+    margin-top: 50px;
+  }
+  
+  .reservation-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .reservation-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  h2 {
+    color: #ff0099;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  

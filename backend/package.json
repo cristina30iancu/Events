@@ -1,0 +1,24 @@
+{
+    "name": "event-location-app",
+    "version": "1.0.0",
+    "description": "Aplicație pentru gestionarea locațiilor de evenimente (ex: Ballroom-uri) cu utilizatori Admin și Client.",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^9.0.2",
+        "sequelize": "^6.6.2",
+        "sqlite3": "^5.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7",
+        "sequelize-cli": "^6.2.0"
+    },
+    "author": "dev",
+    "license": "MIT"
+}

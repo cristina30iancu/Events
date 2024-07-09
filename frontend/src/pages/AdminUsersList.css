@@ -1,0 +1,27 @@
+/* src/components/AdminUsersList.css */
+
+.admin-users-list-container {
+    margin-top: 50px;
+  }
+  
+  .user-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .user-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .user-card img {
+    height: 150px;
+    object-fit: cover;
+  }
+  
+  h2 {
+    color: #ff0099;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  

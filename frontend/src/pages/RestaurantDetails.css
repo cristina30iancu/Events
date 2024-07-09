@@ -1,0 +1,39 @@
+/* src/components/RestaurantDetails.css */
+
+.restaurant-details-container {
+    margin-top: 50px;
+    height: 100vh;
+  }
+  
+  .restaurant-details-card,
+  .hall-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .restaurant-details-card:hover,
+  .hall-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .restaurant-details-card img,
+  .hall-card img {
+    height: 300px;
+    object-fit: cover;
+  }
+  
+.add-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.add-hall-button {
+  background-color: #ff0099;
+  border: none;
+}
+
+.add-hall-button:hover {
+  background-color: #e60082;
+}

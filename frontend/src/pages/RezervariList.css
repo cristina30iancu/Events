@@ -1,0 +1,21 @@
+/* src/components/RezervariList.css */
+
+.rezervari-list-container {
+    margin-top: 50px;
+  }
+  
+  .reservation-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .reservation-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  h3 {
+    color: #ff0099;
+    margin-bottom: 20px;
+    text-align: center;
+  }

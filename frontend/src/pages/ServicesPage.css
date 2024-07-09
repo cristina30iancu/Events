@@ -1,0 +1,35 @@
+/* src/components/ServicesPage.css */
+
+.services-page-container {
+    margin-top: 50px;
+  }
+  
+  .add-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .add-service-button {
+    background-color: #ff0099;
+    border: none;
+  }
+  
+  .add-service-button:hover {
+    background-color: #e60082;
+  }
+  
+  .service-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }  

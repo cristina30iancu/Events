@@ -1,0 +1,49 @@
+/* src/components/NavigationBar.css */
+
+.custom-navbar {
+    background: linear-gradient(45deg, #ff0099, #493240);
+  }
+  
+  .custom-navbar .navbar-brand img {
+    border-radius: 50%;
+  }
+  
+  .custom-navbar .nav-link {
+    color: #fff !important;
+    margin-right: 10px;
+  }
+  
+  .custom-navbar .nav-link:hover {
+    color: #ffccff !important;
+  }
+  
+  .custom-navbar .btn-outline-primary {
+    border-color: #ffccff;
+    color: #ffccff;
+  }
+  
+  .custom-navbar .btn-outline-primary:hover {
+    background-color: #ffccff;
+    color: #493240;
+  }
+  
+  .custom-navbar .btn-outline-danger {
+    border-color: #ffccff;
+    color: #ffccff;
+  }
+  
+  .custom-navbar .btn-outline-danger:hover {
+    background-color: #ffccff;
+    color: #493240;
+  }
+  
+  .custom-navbar .badge-danger {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+  }
+  

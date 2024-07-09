@@ -1,0 +1,33 @@
+/* src/components/AddRestaurant.css */
+.add-restaurant-container {
+    background: white;
+    color: #493240;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+    height: 100vh;
+  }
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(45deg, #ff0099, #493240);
+  }
+  .add-restaurant-container h2 {
+    color: #ff0099;
+    margin-bottom: 20px;
+  }
+  
+  .add-button {
+    background-color: #ff0099;
+    border: none;
+  }
+  
+  .add-button:hover {
+    background-color: #e60082;
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+  
