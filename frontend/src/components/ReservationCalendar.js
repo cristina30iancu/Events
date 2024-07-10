@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 const ReservationCalendar = ({ events }) => {
   return (
     <div className="reservation-calendar-container">
-      <FullCalendar plugins={[dayGridPlugin]}
+      <FullCalendar plugins={[dayGridPlugin]} style={{width: "700px", height: "700px"}}
         initialView="dayGridMonth"
         locale="ro"
         events={events}

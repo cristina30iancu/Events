@@ -69,7 +69,7 @@ const RezervariList = () => {
                 </Col>
               ))}
             </Row>
-            <Card className='p-3'>
+            <Card className='p-3 mb-3' style={{width: "700px"}}>
             <ReservationCalendar events={events} /></Card>
           </div>
         ))

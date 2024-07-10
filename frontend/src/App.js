@@ -19,6 +19,7 @@ import RezervariList from './pages/RezervariList';
 import AdminUsersList from './pages/AdminUsersList';
 import UserReservations from './pages/UserReservations';
 import AllFeedbacks from './pages/AllFeedbacks';
+import Statistics from './pages/Statistics';
 
 const App = () => {
   const addAdmin = async () => {
@@ -84,6 +85,10 @@ const App = () => {
 
           <Route exact path="/all-feedbacks" element={<PrivateAdminRoute />}>
             <Route exact path="/all-feedbacks" element={<AllFeedbacks />} />
+          </Route>
+
+          <Route exact path="/dashboard" element={<PrivateAdminRoute />}>
+            <Route exact path="/dashboard" element={<Statistics />} />
           </Route>
 
           <Route exact path="/reservations-user" element={<PrivateRoute />}>

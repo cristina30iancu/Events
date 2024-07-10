@@ -51,6 +51,8 @@ const NavigationBar = () => {
             <Nav.Link className="my-3" href="/reservations-admin">Rezervări</Nav.Link>}
           {state.isAuthenticated && !state.isAdmin &&
             <Nav.Link className="my-3" href="/reservations-user">Rezervări</Nav.Link>}
+              {state.isAuthenticated && state.isAdmin &&
+            <Nav.Link className="my-3" href="/dashboard">Dashboard</Nav.Link>}
         </Nav>
 
         <Nav>

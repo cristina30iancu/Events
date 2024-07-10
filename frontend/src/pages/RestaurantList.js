@@ -90,11 +90,11 @@ const RestaurantList = () => {
 
   return (
     <Container className="restaurant-list-container">
-      <div className="add-button-container">
+      {state.isAdmin && <div className="add-button-container">
         <Button variant="primary" onClick={handleAddRestaurant} className="add-restaurant-button">
           Adaugă restaurant
         </Button>
-      </div>
+      </div>}
       <Row>
         {restaurants.map((restaurant) => (
           <Col md={4} key={restaurant.id} className="mb-4">

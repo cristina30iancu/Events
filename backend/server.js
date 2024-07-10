@@ -10,6 +10,7 @@ const reservationRoutes = require('./routes/reservationRoutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
 const authRoutes = require('./routes/authRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -25,6 +26,7 @@ app.use('/reservations', reservationRoutes);
 app.use('/invoices', invoiceRoutes);
 app.use('/auth', authRoutes);
 app.use('/feedback', feedbackRoutes);
+app.use('/statistics', statisticsRoutes);
 
 // Pornirea serverului și sincronizarea bazei de date
 app.listen(PORT, async () => {
