@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Edit, Delete } from '@mui/icons-material';
 import './RestaurantDetails.css'; // Stilurile pentru componentă
 import { useAuth } from '../context/AuthContext';
 
 const RestaurantDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { state } = useAuth();
   const [restaurant, setRestaurant] = useState(null);
   const [services, setServices] = useState([]);
@@ -194,7 +195,7 @@ const RestaurantDetails = () => {
       </Card>
       {state.isAdmin && (
         <div className="add-button-container">
-          <Button variant="primary" className="add-hall-button">
+          <Button variant="primary" className="add-hall-button" onClick={() => navigate("/add-hall")}>
             Adaugă salon
           </Button>
         </div>

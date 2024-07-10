@@ -123,7 +123,7 @@ const AddHall = () => {
         {error && <p className="error-message">{error}</p>}
         
         <Button variant="primary" type="submit" className="add-button">
-          Adaugă Salon
+          Adaugă salon
         </Button>
       </Form>
     </Container>
