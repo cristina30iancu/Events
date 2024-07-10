@@ -1,5 +1,5 @@
 const express = require('express');
-const { Reservation, Hall, Restaurant } = require('../database');
+const { Reservation, Hall, Restaurant, Service, User } = require('../database');
 const router = express.Router();
 const { Op } = require('sequelize');
 
@@ -53,5 +53,48 @@ router.get('/monthly-occupancy', async (req, res) => {
     res.status(500).json({ message: 'Error fetching monthly occupancy', error: error.message });
   }
 });
+
+// Endpoint pentru încasările pe lună
+router.get('/monthly-revenue', async (req, res) => {
+  try {
+    const reservations = await Reservation.findAll({
+      include: { model: Service }
+    });
+
+    const monthlyRevenue = Array(12).fill(0);
+
+    reservations.forEach(reservation => {
+      const month = new Date(reservation.eventDate).getMonth();
+      let total = 0;
+      reservation.Services.forEach(service => {
+        total += service.perPerson ? service.price * reservation.numberOfPeople : service.price;
+      });
+      monthlyRevenue[month] += total;
+    });
+
+    res.json(monthlyRevenue);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching monthly revenue', error: error.message });
+  }
+});
+
+// Endpoint pentru obținerea tuturor clienților cu rezervări
+router.get('/clients', async (req, res) => {
+  try {
+    const clients = await User.findAll({
+      where: {
+        role: 'client'
+      },
+      include: [{ model: Reservation }],
+      order: [[Reservation, 'eventDate', 'ASC']]
+    });
+    res.json(clients);
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Error fetching clients', error: error.message });
+  }
+});
+
+
 
 module.exports = router;

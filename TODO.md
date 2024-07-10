@@ -9,9 +9,9 @@
 - editare hall , stergere hall - da
 
 
-- de calculat pretul corect
-- statistici (Grad de ocupare: per salon, per rest, per luna.
+- de calculat pretul corect - da
+- statistici (Grad de ocupare: per salon, per rest, per luna. - da
 Lista pdf cu clienti, ordonata dupa data
-Line chart cu incasari)
-- generare factură
-- o rezervare anulată nu e ok. gestionare
+Line chart cu incasari) - da
+- generare factură - da
+- o rezervare anulată nu e ok. gestionare - da
