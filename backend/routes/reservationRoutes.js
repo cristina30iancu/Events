@@ -1,5 +1,6 @@
 const express = require('express');
-const { Reservation, Hall, Service, User, ReservationService, Restaurant } = require('../database'); // Asigură-te că importi modelele necesare
+const { Reservation, Hall, Service, User, ReservationService, Restaurant, Feedback } = require('../database'); // Asigură-te că importi modelele necesare
+const { Op } = require('sequelize');
 const router = express.Router();
 
 // Ruta pentru preluarea tuturor rezervărilor
@@ -7,8 +8,8 @@ router.get('/', async (req, res) => {
   try {
     const reservations = await Reservation.findAll({
       include: [
-        { model: Hall, include: [{ model: Restaurant }] },
-        { model: User },
+        { model: Hall, include: [{ model: Restaurant }, { model: Feedback }] },
+        { model: User }, { model: Feedback },
         {
           model: Service,
           through: { model: ReservationService }
@@ -29,7 +30,7 @@ router.get('/user/:userId', async (req, res) => {
       where: { userId },
       include: [
         { model: Hall, include: [{ model: Restaurant }] },
-        { model: User },
+        { model: User }, { model: Feedback },
         {
           model: Service,
           through: { model: ReservationService }
@@ -38,6 +39,7 @@ router.get('/user/:userId', async (req, res) => {
     });
     res.json(reservations);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Error fetching user reservations', error: error.message });
   }
 });
@@ -88,7 +90,9 @@ router.post('/', async (req, res) => {
     const userReservation = await Reservation.findOne({
       where: {
         userId,
-        eventDate: new Date(eventDate)
+        eventDate: new Date(eventDate), status: {
+          [Op.ne]: "anulată"
+        }
       }
     });
 
@@ -100,7 +104,9 @@ router.post('/', async (req, res) => {
     const hallReservation = await Reservation.findOne({
       where: {
         hallId,
-        eventDate: new Date(eventDate)
+        eventDate: new Date(eventDate), status: {
+          [Op.ne]: "anulată"
+        }
       }
     });
 
@@ -125,7 +131,7 @@ router.post('/', async (req, res) => {
 
     console.log(serviceIds)
     for (let sId of serviceIds) {
-      console.log('creating' ,{ ReservationId: newReservation.id, ServiceId: sId } )
+      console.log('creating', { ReservationId: newReservation.id, ServiceId: sId })
       await ReservationService.create({ ReservationId: newReservation.id, ServiceId: sId })
     }
     res.status(201).json(newReservation);

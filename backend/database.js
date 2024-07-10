@@ -167,6 +167,36 @@ const ReservationService = sequelize.define('ReservationService', {
   }
 });
 
+const Feedback = sequelize.define('Feedback', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  rating: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1,
+      max: 5
+    }
+  },
+});
+
+Reservation.hasOne(Feedback, {foreignKey: 'reservationId'});
+Feedback.belongsTo(Reservation, {foreignKey: 'reservationId'})
+User.hasMany(Feedback, { foreignKey: 'userId' });
+Hall.hasMany(Feedback, { foreignKey: 'hallId' });
+Feedback.belongsTo(User, { foreignKey: 'userId' });
+Feedback.belongsTo(Hall, { foreignKey: 'hallId' });
 
 // Definire relații
 User.hasMany(Reservation, { foreignKey: 'userId' });
@@ -199,6 +229,6 @@ module.exports = {
   Hall,
   Service,
   Reservation,
-  Invoice,
+  Invoice, Feedback,
   syncDatabase, ReservationService
 };

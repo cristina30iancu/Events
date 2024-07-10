@@ -1,0 +1,12 @@
+.all-feedbacks-container {
+    padding: 20px;
+}
+
+.feedback-card {
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.feedback-card .fa-star {
+    margin-right: 5px;
+}

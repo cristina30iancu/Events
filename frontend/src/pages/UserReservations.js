@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FaStar } from 'react-icons/fa';
 
 const UserReservations = () => {
     const { state } = useAuth();
@@ -15,22 +16,25 @@ const UserReservations = () => {
     const [filteredReservations, setFilteredReservations] = useState([]);
     const [filterStatus, setFilterStatus] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [selectedReservation, setSelectedReservation] = useState(null);
+    const [feedback, setFeedback] = useState({ title: '', description: '', rating: 0 });
+    const [viewFeedback, setViewFeedback] = useState(false); // Pentru a decide dacă arătăm feedback-ul existent sau formularul
     const [newStatus, setNewStatus] = useState('');
+    
+    const fetchReservations = async () => {
+        try {
+            const userId = id || state.id;
+            const response = await axios.get(`http://localhost:8080/reservations/user/${userId}`);
+            setReservations(response.data);
+            setFilteredReservations(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchReservations = async () => {
-            try {
-                const userId = id || state.id;
-                const response = await axios.get(`http://localhost:8080/reservations/user/${userId}`);
-                setReservations(response.data);
-                setFilteredReservations(response.data);
-                console.log(response.data)
-            } catch (error) {
-                console.error('Error fetching reservations:', error);
-            }
-        };
-
         fetchReservations();
     }, [id, state.id]);
 
@@ -47,10 +51,30 @@ const UserReservations = () => {
         setShowModal(true);
     };
 
+    const handleShowFeedbackModal = (reservation, view = false) => {
+        setSelectedReservation(reservation);
+        setViewFeedback(view);
+        if (view && reservation.Feedback) {
+            setFeedback({
+                title: reservation.Feedback.title,
+                description: reservation.Feedback.description,
+                rating: reservation.Feedback.rating,
+            });
+        }
+        setShowFeedbackModal(true);
+    };
+
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedReservation(null);
         setNewStatus('');
+    };
+
+    const handleCloseFeedbackModal = () => {
+        setShowFeedbackModal(false);
+        setSelectedReservation(null);
+        setFeedback({ title: '', description: '', rating: 0 });
+        setViewFeedback(false);
     };
 
     const handleStatusChange = (e) => {
@@ -65,13 +89,46 @@ const UserReservations = () => {
         if (!selectedReservation) return;
 
         try {
-            await axios.put(`http://localhost:8080/reservations/${selectedReservation.id}`, { status: newStatus });
+           const res = await axios.put(`http://localhost:8080/reservations/${selectedReservation.id}`, { status: newStatus });
             setReservations(reservations.map(res => res.id === selectedReservation.id ? { ...res, status: newStatus } : res));
             toast.success("Modificat!");
             handleCloseModal();
         } catch (error) {
             toast.error("Nu s-a putut modifica rezervarea!");
             console.error('Error updating reservation status:', error);
+        }
+    };
+
+    const handleFeedbackChange = (e) => {
+        const { name, value } = e.target;
+        setFeedback({ ...feedback, [name]: value });
+    };
+
+    const handleRatingChange = (rating) => {
+        setFeedback({ ...feedback, rating });
+    };
+
+    const handleFeedbackSubmit = async () => {
+        try {
+            const res = await axios.post('http://localhost:8080/feedback', {
+                userId: state.id,
+                hallId: selectedReservation.hallId,
+                title: feedback.title,
+                description: feedback.description,
+                rating: feedback.rating,
+                reservationId: selectedReservation.id,
+            });
+            if(res.status === 201){
+                toast.success("Feedback adăugat!");
+                await fetchReservations();
+            } else {
+                const data = await res.data;
+                toast.error(data.message);
+            }
+            handleCloseFeedbackModal();
+        } catch (error) {
+            toast.error("Nu s-a putut adăuga feedback-ul!");
+            console.error('Error adding feedback:', error);
         }
     };
 
@@ -133,12 +190,22 @@ const UserReservations = () => {
                                 <Card.Text><strong>Salon:</strong> {reservation.Hall.name}</Card.Text>
                                 <Card.Text><strong>Servicii:</strong> {reservation.Services.map(service => service.name).join(', ')}</Card.Text>
                                 <Card.Text><strong>Status:</strong> {reservation.status}</Card.Text>
+                                {reservation.status === 'confirmată' && !state.isAdmin && !reservation.Feedback && (
+                                    <Button variant="success" onClick={() => handleShowFeedbackModal(reservation, false)} className="m-2">
+                                        Adaugă feedback
+                                    </Button>
+                                )}
+                                {reservation.status === 'confirmată' && reservation.Feedback && (
+                                    <Button variant="info" onClick={() => handleShowFeedbackModal(reservation, true)} className="m-2">
+                                        Vezi feedback
+                                    </Button>
+                                )}
                                 {state.isAdmin && (
-                                    <Button variant="primary" onClick={() => handleShowModal(reservation)}>
+                                    <Button variant="primary" className="m-2" onClick={() => handleShowModal(reservation)}>
                                         Modifică status
                                     </Button>
                                 )}
-                                <Button variant="secondary" onClick={() => generateInvoice(reservation)} className="mt-2">
+                                <Button variant="secondary" onClick={() => generateInvoice(reservation)} className="m-2">
                                     Generează factură
                                 </Button>
                             </Card.Body>
@@ -168,6 +235,78 @@ const UserReservations = () => {
                     <Button variant="primary" onClick={handleStatusUpdate}>
                         Salvează
                     </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showFeedbackModal} onHide={handleCloseFeedbackModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{viewFeedback ? "Feedback" : "Adaugă feedback"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {viewFeedback ? (
+                        <>
+                            <h5>{feedback.title}</h5>
+                            <p>{feedback.description}</p>
+                            <div>
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar
+                                        key={i}
+                                        size={30}
+                                        color={i < feedback.rating ? '#ffc107' : '#e4e5e9'}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Form.Group controlId="formTitle">
+                                <Form.Label>Titlu</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="title"
+                                    value={feedback.title}
+                                    onChange={handleFeedbackChange}
+                                    required
+                                />
+                            </Form.Group>
+
+                            <Form.Group controlId="formDescription">
+                                <Form.Label>Descriere</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    name="description"
+                                    value={feedback.description}
+                                    onChange={handleFeedbackChange}
+                                    required
+                                />
+                            </Form.Group>
+
+                            <Form.Group controlId="formRating">
+                                <Form.Label>Notă</Form.Label>
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar
+                                        key={i}
+                                        size={30}
+                                        color={i < feedback.rating ? '#ffc107' : '#e4e5e9'}
+                                        onClick={() => handleRatingChange(i + 1)}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                ))}
+                            </Form.Group>
+                        </>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseFeedbackModal}>
+                        Anulează
+                    </Button>
+                    {!viewFeedback && (
+                        <Button variant="primary" onClick={handleFeedbackSubmit}>
+                            Trimite feedback
+                        </Button>
+                    )}
                 </Modal.Footer>
             </Modal>
         </Container>

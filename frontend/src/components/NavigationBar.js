@@ -12,7 +12,7 @@ const NavigationBar = () => {
   const [noItemsFav, setNoItemsFav] = useState(0);
 
   useEffect(() => {
-  
+
   }, [state.isAuthenticated, state.id]);
 
   const onLogOut = () => {
@@ -26,8 +26,8 @@ const NavigationBar = () => {
     <Navbar bg="dark" expand="lg" variant="dark" className="custom-navbar">
       <Navbar.Brand href="/" className="mx-3">
         <img
-          alt="logo"src={logo} width="50" height="50"className="d-inline-block align-top"
-        /> 
+          alt="logo" src={logo} width="50" height="50" className="d-inline-block align-top"
+        />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="navbarNav" />
       <Navbar.Collapse id="navbarNav" className="mx-3">
@@ -38,19 +38,21 @@ const NavigationBar = () => {
               <NavDropdown.Item href="/restaurants">Vizualizează</NavDropdown.Item>
             </NavDropdown>
           )}
-           {state.isAuthenticated && !state.isAdmin && (
+          {state.isAuthenticated && !state.isAdmin && (
             <Nav.Link className="my-3" href="/restaurants">Rezervă</Nav.Link>
           )}
-           {state.isAuthenticated && state.isAdmin &&
-           <Nav.Link className="my-3" href="/services">Servicii</Nav.Link>}
-            {state.isAuthenticated && state.isAdmin &&
-           <Nav.Link className="my-3" href="/admin/users">Utilizatori</Nav.Link>}
-            {state.isAuthenticated && state.isAdmin &&
-           <Nav.Link className="my-3" href="/reservations-admin">Rezervări</Nav.Link>}
-            {state.isAuthenticated && !state.isAdmin &&
-           <Nav.Link className="my-3" href="/reservations-user">Rezervări</Nav.Link>}
+          {state.isAuthenticated && state.isAdmin &&
+            <Nav.Link className="my-3" href="/services">Servicii</Nav.Link>}
+             {state.isAuthenticated && state.isAdmin &&
+            <Nav.Link className="my-3" href="/all-feedbacks">Recenzii</Nav.Link>}
+          {state.isAuthenticated && state.isAdmin &&
+            <Nav.Link className="my-3" href="/admin/users">Utilizatori</Nav.Link>}
+          {state.isAuthenticated && state.isAdmin &&
+            <Nav.Link className="my-3" href="/reservations-admin">Rezervări</Nav.Link>}
+          {state.isAuthenticated && !state.isAdmin &&
+            <Nav.Link className="my-3" href="/reservations-user">Rezervări</Nav.Link>}
         </Nav>
-        
+
         <Nav>
           {state.isAuthenticated ? (
             <Nav.Link onClick={onLogOut} className="my-2">

@@ -14,3 +14,4 @@
 Lista pdf cu clienti, ordonata dupa data
 Line chart cu incasari)
 - generare factură
+- o rezervare anulată nu e ok. gestionare
